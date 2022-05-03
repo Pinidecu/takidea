@@ -1,22 +1,31 @@
 // VAMOS A necesitar nodemon, express, sequelize, pg, morgan
 //npm i express sequelize pg morgan
 
-const Express = require ('express')
+const express = require("express");
+const morgan = require("morgan");
+const routes = require("./src/routes/index");
+const errorHandler = require('./src/utils/middlewares/errorHandles');
+const setHeaders = require("./src/utils/middlewares/setHeaders");
+const { PORT } = require("./src/utils/config");
 
-const app = Express()
+const app = express();
 
 // Setear nuestros headers
-
+app.use(express.urlencoded({ extend: true, limit: "50mb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(morgan("dev")); //Guia de lo que esta pasando
+app.use(setHeaders);
 
 // Setear rutas
-app.get('/', (req, res)=>{
-    res.send('Hola Mundo!')
-})
+app.use("/", routes);
 
 //Middlewar de control de errores
+app.use(errorHandler);
+
+
 
 // Server.listen
 
-app.listen(3000, () =>{
-    console.log('El servidor esta escuchando el puerto 3000')
-})
+app.listen(PORT, () => {
+  console.log(`El servidor esta escuchando el puerto ${PORT}`);
+});
