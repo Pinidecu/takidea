@@ -4,8 +4,9 @@
 const express = require("express");
 const morgan = require("morgan");
 const routes = require("./src/routes/index");
-const errorHandler = require('./src/utils/middlewares/errorHandles');
+const errorHandler = require("./src/utils/middlewares/errorHandles");
 const setHeaders = require("./src/utils/middlewares/setHeaders");
+const { conn } = require("./src/models/index");
 const { PORT } = require("./src/utils/config");
 
 const app = express();
@@ -22,10 +23,10 @@ app.use("/", routes);
 //Middlewar de control de errores
 app.use(errorHandler);
 
-
-
 // Server.listen
-
-app.listen(PORT, () => {
-  console.log(`El servidor esta escuchando el puerto ${PORT}`);
+conn.sync({ force: true }).then(() => {
+  console.log("Base de datos conectada.");
+  app.listen(PORT, () => {
+    console.log(`El servidor esta escuchando el puerto ${PORT}`);
+  });
 });
